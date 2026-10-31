@@ -1,0 +1,26 @@
+#!/bin/bash
+# Aura OS Installer - Apple-like with Aura HD
+
+echo "============================="
+echo "   Aura OS Installer 1.0"
+echo "============================="
+lsblk
+echo ""
+read -p "Enter disk to install (e.g. /dev/sda): " DISK
+read -p "This will ERASE $DISK. Type YES to continue: " CONFIRM
+
+if [ "$CONFIRM" != "YES" ]; then
+  echo "Cancelled."
+  exit 1
+fi
+
+echo "Installing Aura OS to $DISK..."
+echo "Creating Aura HD..."
+mkfs.ext4 ${DISK}1
+mkdir -p /mnt/aura
+mount ${DISK}1 /mnt/aura
+cp -a /usr /mnt/aura/
+cp -a /bin /mnt/aura/
+cp -a /etc /mnt/aura/
+echo "Aura HD Created!"
+echo "Installation complete. Reboot and remove USB."
