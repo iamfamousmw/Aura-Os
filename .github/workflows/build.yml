@@ -1,0 +1,23 @@
+name: Build Aura OS from Scratch
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps
+        run: sudo apt update && sudo apt install -y build-essential git libncurses-dev bc cpio
+      - name: Install Rust
+        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+      - name: Clone Buildroot
+        run: git clone https://github.com/buildroot/buildroot --depth 1
+      - name: Build ISO from Scratch
+        run: |
+          cd buildroot
+          make BR2_EXTERNAL=../ aura_defconfig
+          make -j$(nproc)
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: AuraOS-From-Scratch-ISO
+          path: buildroot/output/images/*.iso
