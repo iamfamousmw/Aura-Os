@@ -14,7 +14,7 @@ jobs:
       - name: Build ISO from Scratch
         run: |
           cd buildroot
-          make BR2_EXTERNAL=../ aura_defconfig
+          make BR2_EXTERNAL=../aura_defconfig
           make -j$(nproc)
       - name: Upload ISO
         uses: actions/upload-artifact@v4
