@@ -1,3 +1,4 @@
 config BR2_PACKAGE_AURA_DRIVES
 	bool "Aura Drive Daemon"
 	default y
+depends on BR2_PACKAGE_HOST_RUSTC
