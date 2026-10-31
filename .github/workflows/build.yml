@@ -6,14 +6,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential git libncurses-dev bc cpio unzip rsync python3
+        run: sudo apt-get update && sudo apt-get install -y build-essential git libncurses-dev bc cpio unzip rsync python3
       - name: Clone Buildroot
+        run: git clone https://github.com/buildroot/buildroot --depth 1
+      - name: Fix missing files
         run: |
-          git clone https://github.com/buildroot/buildroot --depth 1
-          ls ../
-          ls ../aura-os || ls .
+          ls -la
+          cat external.desc || echo "name: AURA_OS" > external.desc
+          cat Config.in || echo -e 'menu "Aura OS Packages"\nsource "$BR2_EXTERNAL_AURA_OS_PATH/board/aura/aura-drives/Config.in"\nendmenu' > Config.in
+          cat external.mk || echo 'include $(sort $(wildcard $(BR2_EXTERNAL_AURA_OS_PATH)/board/*/*.mk))' > external.mk
+          mkdir -p board/aura/aura-drives
+          cat board/aura/aura-drives/Config.in || echo -e 'config BR2_PACKAGE_AURA_DRIVES\n\tbool "Aura Drive Daemon"\n\tdefault y' > board/aura/aura-drives/Config.in
+          ls -la && cat Config.in
       - name: Build ISO from Scratch
         run: |
           cd buildroot
