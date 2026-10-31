@@ -6,18 +6,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install deps
-        run: sudo apt update && sudo apt install -y build-essential git libncurses-dev bc cpio
-      - name: Install Rust
-        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git libncurses-dev bc cpio unzip rsync python3
       - name: Clone Buildroot
-        run: git clone https://github.com/buildroot/buildroot --depth 1
+        run: |
+          git clone https://github.com/buildroot/buildroot --depth 1
+          ls ../
+          ls ../aura-os || ls .
       - name: Build ISO from Scratch
         run: |
           cd buildroot
-          make BR2_EXTERNAL=../configs/aura_defconfig
+          make BR2_EXTERNAL=$GITHUB_WORKSPACE aura_defconfig
           make -j$(nproc)
       - name: Upload ISO
         uses: actions/upload-artifact@v4
         with:
-          name: AuraOS-From-Scratch-ISO
+          name: AuraOS-ISO
           path: buildroot/output/images/*.iso
