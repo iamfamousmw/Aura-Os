@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Aura Drive Daemon
+Exec=/usr/bin/aura-drives
+X-GNOME-Autostart-enabled=true
